@@ -1,0 +1,104 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Helium Update Checker</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f9fc;
+      --panel: #ffffff;
+      --text: #162033;
+      --muted: #5a6a86;
+      --accent: #2e6cf6;
+      --ok: #0a8f5a;
+      --warn: #d97a00;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      width: 340px;
+    }
+
+    .card {
+      background: var(--panel);
+      margin: 12px;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(18, 30, 56, 0.1);
+      padding: 12px;
+    }
+
+    h1 {
+      font-size: 16px;
+      margin: 0 0 8px;
+    }
+
+    p {
+      margin: 6px 0;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .muted { color: var(--muted); }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    button, a {
+      flex: 1;
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    button {
+      background: var(--accent);
+      color: white;
+    }
+
+    a {
+      background: #e7edff;
+      color: #1d4fd8;
+    }
+
+    .status-ok { color: var(--ok); font-weight: 600; }
+    .status-warn { color: var(--warn); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Helium Windows Monitor</h1>
+    <p class="muted">Tracking <strong id="trackingRepo">imputnet/helium-windows</strong></p>
+    <p id="platform" class="muted"></p>
+    <p id="status">Loading status...</p>
+    <p id="release"></p>
+    <p id="commit"></p>
+    <p id="checked" class="muted"></p>
+    <div class="row">
+      <button id="checkNow">Check now</button>
+      <a id="openRepo" href="https://github.com/imputnet/helium-windows" target="_blank" rel="noreferrer">Open repo</a>
+    </div>
+    <div class="row">
+      <button id="resetTest">Reset for test</button>
+    </div>
+    <div class="row">
+      <button id="downloadInstaller">Download latest installer</button>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

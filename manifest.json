@@ -1,0 +1,15 @@
+﻿{
+  "manifest_version": 3,
+  "name": "Helium Windows Update Checker",
+  "version": "1.0.0",
+  "description": "Checks the correct Helium GitHub repo for your OS and notifies on updates.",
+  "permissions": ["alarms", "storage", "notifications", "tabs", "downloads"],
+  "host_permissions": ["https://api.github.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Helium Update Checker",
+    "default_popup": "popup.html"
+  }
+}
