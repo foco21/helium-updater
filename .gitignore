@@ -1,0 +1,11 @@
+# Signing keys — NEVER commit these
+*.pem
+
+# Build artifacts
+*.crx
+*.zip
+
+# Generated promo art / scripts (optional)
+promo-*.png
+make-promo.ps1
+build/
