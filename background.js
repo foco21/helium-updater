@@ -5,7 +5,9 @@ const REPO_BY_OS = {
   mac: "helium-macos",
   linux: "helium-linux"
 };
-const CHECK_INTERVAL_MINUTES = 1440;
+const CHECK_INTERVAL_MINUTES = 10080; // weekly
+const ALARM_NAME = "check-helium-updates";
+const STALE_AFTER_MS = CHECK_INTERVAL_MINUTES * 60 * 1000;
 const STORAGE_KEY = "heliumUpdateState";
 const RELEASE_NOTIFICATION_ID = "helium-release-update";
 const COMMIT_NOTIFICATION_ID = "helium-commit-update";
@@ -335,17 +337,37 @@ async function checkForUpdates({ notify = true, initialize = false } = {}) {
   }
 }
 
+async function ensureAlarm() {
+  // Only (re)create the alarm if it's missing, so we don't reset the
+  // weekly countdown every time the service worker or browser restarts.
+  const existing = await chrome.alarms.get(ALARM_NAME);
+  if (!existing) {
+    chrome.alarms.create(ALARM_NAME, { periodInMinutes: CHECK_INTERVAL_MINUTES });
+  }
+}
+
+async function catchUpIfStale() {
+  // A weekly alarm can be missed entirely if the browser was closed when it
+  // was due. On startup, run a check if it's been at least a week.
+  const previous = await getStoredState();
+  const lastChecked = previous?.checkedAt ? new Date(previous.checkedAt).getTime() : 0;
+  if (!Number.isFinite(lastChecked) || Date.now() - lastChecked >= STALE_AFTER_MS) {
+    await checkForUpdates({ notify: true });
+  }
+}
+
 chrome.runtime.onInstalled.addListener(async () => {
-  chrome.alarms.create("check-helium-updates", { periodInMinutes: CHECK_INTERVAL_MINUTES });
+  await ensureAlarm();
   await checkForUpdates({ notify: false, initialize: true });
 });
 
-chrome.runtime.onStartup.addListener(() => {
-  chrome.alarms.create("check-helium-updates", { periodInMinutes: CHECK_INTERVAL_MINUTES });
+chrome.runtime.onStartup.addListener(async () => {
+  await ensureAlarm();
+  await catchUpIfStale();
 });
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
-  if (alarm.name !== "check-helium-updates") return;
+  if (alarm.name !== ALARM_NAME) return;
   await checkForUpdates({ notify: true });
 });
 
